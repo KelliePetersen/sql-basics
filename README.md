@@ -2,29 +2,43 @@ SQL BASICS
 =====  
 These are notes that I made about general SQL commands, which are used across various database management systems.  
 
+## CONTENTS
+
+[Commands](https://github.com/KelliePetersen/sql-basics#commands)  
+[Queries](https://github.com/KelliePetersen/sql-basics#queries)  
+[Aggregate Functions](https://github.com/KelliePetersen/sql-basics#aggregate-functions)  
+[Command Order](https://github.com/KelliePetersen/sql-basics#command-order)  
+[Information](https://github.com/KelliePetersen/sql-basics#information)  
+[Multiple Tables](https://github.com/KelliePetersen/sql-basics#multiple-tables)  
+[Other](https://github.com/KelliePetersen/sql-basics#other)  
+
 ## COMMANDS
 ### Creating a Table
 A table is created with `CREATE TABLE your_table_name ( *column values written here* );`
 
 Here is an example of creating a table with different column values:
 ```
-CREATE TABLE your_table_name (  
+CREATE TABLE Students (  
   id INTEGER PRIMARY KEY,  
-  column_name1 TEXT,  
-  column_name2 TEXT UNIQUE,  
-  column_name3 TEXT NOT NULL,  
-  column_name4 TEXT DEFAULT ‘default_value’); 
+  name TEXT,  
+  grade REAL,  
+  username TEXT UNIQUE,  
+  year_level INTEGER NOT NULL,  
+  enrollment DATE DEFAULT '2018-01-20');  
   ```  
 
-**id INTEGER PRIMARY KEY:** Creates a column called id, and each row in that column has a primary key - a unique number that identifies each row. Each row must be assigned a different key. Inserting a row with an identical key to a row already in the table will result in a constraint violation which will not allow you to insert the new row.  
-
-**TEXT UNIQUE:** These columns must have a different value every row. There can be multiple unique columns in one table.  
-**TEXT NOT NULL:** This column must have a value or it will result in a constraint violation.  
-**TEXT DEFAULT:** This gives a row a default value if no value was specified in row creation.  
+**id INTEGER PRIMARY KEY:** This creates a column called *id*, and each row in that column has a *primary key* - a unique number that identifies each row. Each row must be assigned a different key. Inserting a row with an identical key to a row already in the table will result in a *constraint violation*, which will not allow you to insert the new row.  
+**name TEXT:** This creates a column called *name*, and any value entered into it must be text.  
+**grade REAL:** This creates a column called *grade*, and any value inserted into it must be a number with decimal values.  
+**username TEXT UNIQUE:** This creates a column called *username*, and any value entered into it must be text. *UNIQUE* means that this column must have a different username entered into it every row. Trying to create two identical usernames would cause an error. There can be multiple unique columns in one table.  
+**year_level INTEGER NOT NULL:** This creates a column called *year_level*, and any value entered into it must be a whole number. *NOT NULL* means that this column must have a value or it will result in a constraint violation.  
+**enrollment DATE DEFAULT '2018-01-20':** This creates a column called *enrollment*, and any value entered into it must be a date in YYYY-MM-DD format. *Default '2018-01-20'* means that if no value is entered, its default value will be 2018-01-20.  
   
 ### Inserting Rows
 `INSERT INTO table_name (column1, column2, etc.) VALUES (value1, value2, etc.);`  
 This adds a new row to the table. You specify the columns you wish to add values to, and what the values are.  
+For example:  
+`INSERT INTO students (name, grade, year_level) VALUES ('Mike Smith', 75.5, 5);`  
 
 ### Selecting Data
 `SELECT * FROM table_name;`  
