@@ -6,16 +6,16 @@ There are also MySQL notes at the bottom of each section.
 ## CONTENTS
 
 [Commands](https://github.com/KelliePetersen/sql-basics#commands)  
-[Queries](https://github.com/KelliePetersen/sql-basics#queries)  
-[Aggregate Functions](https://github.com/KelliePetersen/sql-basics#aggregate-functions)  
-[Command Order](https://github.com/KelliePetersen/sql-basics#command-order)  
-[Information](https://github.com/KelliePetersen/sql-basics#information)  
-[Multiple Tables](https://github.com/KelliePetersen/sql-basics#multiple-tables)  
-[Other](https://github.com/KelliePetersen/sql-basics#other)  
+[Queries](#queries)  
+[Aggregate Functions](#aggregate-functions)  
+[Command Order](#command-order)  
+[Information](#information)  
+[Multiple Tables](#multiple-tables)  
+[Other](#other)  
 
 ## COMMANDS
 ### Creating a Table
-A table is created with `CREATE TABLE your_table_name ( *column values written here* );`
+A table is created with `CREATE TABLE your_table_name ( *column values written here* );`  
 Here is an example of creating a simple table with different column values:
 ```
 CREATE TABLE Students (  
@@ -24,15 +24,23 @@ CREATE TABLE Students (
   grade REAL,  
   username TEXT,  
   year_level INTEGER,  
-  enrollment DATE);  
+  enrollment DATE
+);  
   ```  
-This creates a table containing the columns id, name, grade, username, year_level and enrollment. INTEGER, TEXT, REAL and DATE are *keywords*. The *keywords* specify what value each column will accept. The name and username columns accept text in quotes only ('John Smith'). The grade column accepts decimal numbers only (83.3). The id and year_level columns will accept 12 but not 'twelve' or 12.0. The enrollment column will only accept dates in YYYY-MM-DD format.
+This creates a table containing the columns id, name, grade, username, year_level and enrollment. INTEGER, TEXT, REAL and DATE are *keywords*. The *keywords* specify the *data type* that each column will accept. 
+
+### Data Types
+**TEXT**: A simple text value, written in quotes.  
+**INTEGER**: Any whole numbers.  
+**REAL**: Numbers with decimal places.  
+**DATE**: The date written in YYYY-MM-DD format, in quotes.  
+A full list can be found here: [w3schools Data Types](https://www.w3schools.com/sql/sql_datatypes.asp).
 
 ### Keywords
-Here is the above example with additional keywords:
+Here is the example from earlier with additional keywords:
 ```
 CREATE TABLE Students (  
-  id INTEGER PRIMARY KEY,  
+  id INTEGER,  
   name TEXT,  
   grade REAL,  
   username TEXT UNIQUE,  
@@ -40,13 +48,45 @@ CREATE TABLE Students (
   enrollment DATE DEFAULT '2018-01-20');  
   ```  
 
-**PRIMARY KEY:** This gives each row in the column a *primary key* - a unique number that identifies each row. Each row must be assigned a different key. Inserting a row with a key that is identical to a row already in the table will result in a *constraint violation*, which will not allow you to insert the new row.  
 **UNIQUE:** This means that the column must have a different value entered into it every row. Trying to create identical values in multiple rows would cause an error. There can be multiple unique columns in one table. Unlike Primary Key, *unique* does not work as an identifer.  
 **NOT NULL:** This means that the column must have a value or it will result in a constraint violation.  
-**DEFAULT 'value':** This means that if no value is entered, its default value will be whatever is written in the quotes.  
+**DEFAULT dfvalue:** This means that if no value is entered, its default value will be whatever is written as dfvalue.  
   
 > **MySQL**  
+> **UNSIGNED:** This is used on INTEGER columns. It means that the column will not accept negative numbers as values. 
 > **AUTO_INCREMENT:** This is used on INTEGER columns. It means that if its value is left blank when inserting a row, MySQL will automatically generate a unique identifier value. This value will be 1 greater than the maximum value in the column already.
+
+### Primary Keys
+Let's expand one line from the earlier example:
+```
+CREATE TABLE Students (  
+  id INTEGER PRIMARY KEY, 
+  ...
+);
+```
+PRIMARY KEY gives each row in the column a *primary key* - a unique number that identifies each row. Each row must be assigned a different key and cannot be left blank. Inserting a row with a key that is identical to a row already in the table will result in a *constraint violation*, which will not allow you to insert the new row.  
+
+Primary Keys are made differently in MySQL:
+```
+CREATE TABLE Students (
+  id INTEGER,
+  ...
+  PRIMARY KEY(id)
+);
+```
+
+### Foreign Keys
+When the primary key appears in a different table, it is called a foreign key. A foreign key links two tables together.
+This MySQL example links the *grade* column to another table:
+```
+CREATE TABLE Orders (
+  ...
+  grade REAL,
+  ...
+  FOREIGN KEY (grade) REFERENCES Grades(total)
+); 
+```
+The *grade* column will get its value from the *total* column in the *Grades* table. 
 
 ### Inserting Rows
 `INSERT INTO table_name (column1, column2, etc.) VALUES (value1, value2, etc.);`  
@@ -136,7 +176,8 @@ This filters which groups to include and which to exclude. It’s like WHERE, bu
 **ROUND:** `SELECT ROUND(name, 0) FROM table_name;`  
 This rounds the returned numbers of the specified column to the number of decimal points specified. It may contain other commands as the name value. For example, ROUND(AVG(name), 2). */
 
-## COMMAND ORDER											
+## COMMAND ORDER
+When using aggregations, WHERE will always run before them, so use HAVING instead.  
 ```
 SELECT * AS alias_name,
     CASE
@@ -155,27 +196,15 @@ LIMIT number;
 
 ## INFORMATION												
 
-* Use indentation to improve readability and flow.
-* Uppercase commands are referred to as clauses.
 * Calculations performed on multiple rows of a table are called aggregates. 
 * Aggregates and commands may contain and combine themselves and each other.
-* WHERE always run before aggregations, so use HAVING instead. 
 
 Numbers may be used to refer to SELECT columns in GROUP BY and ORDER BY commands.
 For example, `SELECT name, age GROUP BY 2` groups the returned values by age.
 
-**DATA TYPES**  
-	TEXT: A simple text value, written in quotes.  
-	INTEGER: Any whole numbers.  
-	REAL: Numbers with decimal places.  
-	DATE: The date written in YYYY-MM-DD format, in quotes.  
-
-**PRIMARY KEYS**  
-Special columns (1 per table) are called primary keys. Primary keys cannot be NULL and they must each have a unique value. When the primary key appears in a different table, it is called a foreign key.
-
 **DISPLAYING TABLE NAMES**  
 	PostgreSQL	\dt and \d table_name  
-	MySQL	show tables and describe table_name  
+	MySQL		show tables and describe table_name  
 	SQLite		.tables and .schema table_name  
 	
 ## MULTIPLE TABLES									
