@@ -6,11 +6,13 @@ There are also MySQL notes at the bottom of each section.
 ## CONTENTS
 
 [Commands](https://github.com/KelliePetersen/sql-basics#commands)  
+[Operators](#operators)  
 [Queries](#queries)  
 [Aggregate Functions](#aggregate-functions)  
 [Command Order](#command-order)  
-[Information](#information)  
+[View Database Contents](#view-database-contents)  
 [Multiple Tables](#multiple-tables)  
+[Notes](#notes)  
 [Other](#other)  
 
 ## COMMANDS
@@ -88,11 +90,26 @@ CREATE TABLE Orders (
 ```
 The *grade* column will get its value from the *total* column in the *Grades* table. 
 
-### Inserting Rows
+### Inserting Data
 `INSERT INTO table_name (column1, column2, etc.) VALUES (value1, value2, etc.);`  
 This adds a new row to the table. You specify the columns you wish to add values to, and what the values are.  
 For example:  
 `INSERT INTO students (name, grade, year_level) VALUES ('Mike Smith', 75.5, 5);`  
+
+Specifying columns is optional. If you do not write any column names, the values will be applied to each column in order.  
+For example:
+`INSERT INTO students VALUES (1, 'Mike Smith', 75.5, 'Mikey', 5, '2014-03-05');`  
+
+Multiple rows can be inserted at once, by containing each row inside parentheses and separating them with commas.  
+
+**MySQL**  
+If a column is set to AUTO_INCREMENT and you want to take advantage of that, use NULL for its value when inserting. 
+Set Priority by adding the following after the word INSERT:  
+HIGH_PRIORITY:  
+LOW_PRIORITY: The system will insert when data is not being read from the table.  
+DELAYED: Inserted data will be buffered. If the server is busy, you can continue using queries without waiting for this operation to complete.  
+Add these settings after INSERT and/or priority:  
+IGNORE: If the inserted row(s) contain an already-used unique key, they will be silently skipped.  
 
 ### Selecting Data
 `SELECT * FROM table_name;`  
@@ -112,6 +129,11 @@ This deletes all columns or rows that have the column name or id number specifie
 
 `DELETE FROM table_name WHERE column_name IS NULL;`  
 This deletes all rows that have a null value in the specified column.
+
+## OPERATORS
+
+[SQL Operators](https://www.w3schools.com/sql/sql_operators.asp)  
+[MySQL Operators](https://dev.mysql.com/doc/refman/5.5/en/non-typed-operators.html)  
 
 ## QUERIES													
 
@@ -194,19 +216,14 @@ ORDER BY name
 LIMIT number;
 ```
 
-## INFORMATION												
+## VIEW DATABASE CONTENTS											
 
-* Calculations performed on multiple rows of a table are called aggregates. 
-* Aggregates and commands may contain and combine themselves and each other.
+| | MySQL | PostgreSQL | SQLite |
+|--|--|--|--|
+| Table Names | show tables; | \dt | .tables |
+| Table Information | describe table_name; | \d table_name | .schema table_name |
+| Database Names | show databases; |
 
-Numbers may be used to refer to SELECT columns in GROUP BY and ORDER BY commands.
-For example, `SELECT name, age GROUP BY 2` groups the returned values by age.
-
-**DISPLAYING TABLE NAMES**  
-	PostgreSQL	\dt and \d table_name  
-	MySQL		show tables and describe table_name  
-	SQLite		.tables and .schema table_name  
-	
 ## MULTIPLE TABLES									
 
 Information will often be spread out across multiple tables. If all information was contained in a single table, there would be a lot of repeated information. For example, a table that had a column for a person’s name, and had a row for purchased items, would list the person’s name multiple times for each unique item they purchased. This is why it’s important to learn how to handle multiple tables.  
@@ -229,6 +246,13 @@ This stacks one table on top of the other. The tables must have the same amount 
 
 **WITH:** `WITH previous_query AS ( SELECT … ) SELECT * FROM previous_query ... ;`  
 This creates a separate query functioning as a temporary table, which we may use in the final query.
+
+## NOTES
+
+* Aggregates and commands may contain and combine themselves and each other.
+
+Numbers may be used to refer to SELECT columns in GROUP BY and ORDER BY commands.
+For example, `SELECT name, age GROUP BY 2` groups the returned values by age.
 
 ## OTHER													
 These commands vary depending on the database system.
