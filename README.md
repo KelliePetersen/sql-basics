@@ -1,6 +1,7 @@
 SQL BASICS
 =====  
 These are notes that I made about general SQL commands, which are used across various database management systems.  
+There are also MySQL notes at the bottom of each section.  
 
 ## CONTENTS
 
@@ -15,8 +16,20 @@ These are notes that I made about general SQL commands, which are used across va
 ## COMMANDS
 ### Creating a Table
 A table is created with `CREATE TABLE your_table_name ( *column values written here* );`
+Here is an example of creating a simple table with different column values:
+```
+CREATE TABLE Students (  
+  id INTEGER,  
+  name TEXT,  
+  grade REAL,  
+  username TEXT,  
+  year_level INTEGER,  
+  enrollment DATE);  
+  ```  
+This creates a table containing the columns id, name, grade, username, year_level and enrollment. INTEGER, TEXT, REAL and DATE are *keywords*. The *keywords* specify what value each column will accept. The name and username columns accept text in quotes only ('John Smith'). The grade column accepts decimal numbers only (83.3). The id and year_level columns will accept 12 but not 'twelve' or 12.0. The enrollment column will only accept dates in YYYY-MM-DD format.
 
-Here is an example of creating a table with different column values:
+### Keywords
+Here is the above example with additional keywords:
 ```
 CREATE TABLE Students (  
   id INTEGER PRIMARY KEY,  
@@ -27,13 +40,14 @@ CREATE TABLE Students (
   enrollment DATE DEFAULT '2018-01-20');  
   ```  
 
-**id INTEGER PRIMARY KEY:** This creates a column called *id*, and each row in that column has a *primary key* - a unique number that identifies each row. Each row must be assigned a different key. Inserting a row with an identical key to a row already in the table will result in a *constraint violation*, which will not allow you to insert the new row.  
-**name TEXT:** This creates a column called *name*, and any value entered into it must be text.  
-**grade REAL:** This creates a column called *grade*, and any value inserted into it must be a number with decimal values.  
-**username TEXT UNIQUE:** This creates a column called *username*, and any value entered into it must be text. *UNIQUE* means that this column must have a different username entered into it every row. Trying to create two identical usernames would cause an error. There can be multiple unique columns in one table.  
-**year_level INTEGER NOT NULL:** This creates a column called *year_level*, and any value entered into it must be a whole number. *NOT NULL* means that this column must have a value or it will result in a constraint violation.  
-**enrollment DATE DEFAULT '2018-01-20':** This creates a column called *enrollment*, and any value entered into it must be a date in YYYY-MM-DD format. *Default '2018-01-20'* means that if no value is entered, its default value will be 2018-01-20.  
+**PRIMARY KEY:** This gives each row in the column a *primary key* - a unique number that identifies each row. Each row must be assigned a different key. Inserting a row with a key that is identical to a row already in the table will result in a *constraint violation*, which will not allow you to insert the new row.  
+**UNIQUE:** This means that the column must have a different value entered into it every row. Trying to create identical values in multiple rows would cause an error. There can be multiple unique columns in one table. Unlike Primary Key, *unique* does not work as an identifer.  
+**NOT NULL:** This means that the column must have a value or it will result in a constraint violation.  
+**DEFAULT 'value':** This means that if no value is entered, its default value will be whatever is written in the quotes.  
   
+> **MySQL**  
+> **AUTO_INCREMENT:** This is used on INTEGER columns. It means that if its value is left blank when inserting a row, MySQL will automatically generate a unique identifier value. This value will be 1 greater than the maximum value in the column already.
+
 ### Inserting Rows
 `INSERT INTO table_name (column1, column2, etc.) VALUES (value1, value2, etc.);`  
 This adds a new row to the table. You specify the columns you wish to add values to, and what the values are.  
