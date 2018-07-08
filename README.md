@@ -116,19 +116,24 @@ IGNORE: If the inserted row(s) contain an already-used unique key, they will be 
 This selects everything from the table. Replace * with the column names or row IDs if you wish to be more specific. Separate them with commas.  
 
 ### Updating Data
-`UPDATE table_name SET column = value WHERE id = number;`  
-This Updates the specified table, selects which column to change (Example: age = 22), and selects the row(s) to change the column value in.
+`UPDATE table_name SET column = value WHERE condition;`  
+This updates the specified table, selects which column to change (Example: age = 22), and selects the row(s) to change the column value in (Example: id = 5). Like INSERT, it can use MySQL's priority and ignore commands.  
 
-### Adding Columns
+### Altering Data
 `ALTER TABLE table_name ADD COLUMN column_name TEXT;`  
-This alters the specified table and adds a column, and the data type is specified last. 
+This alters the specified table and adds a column, and the data type is specified last. Altering can perform other functions, such as changing and dropping columns and foreign keys.  
+MySQL allows you to make multiple alterations in one statement. 
 
 ### Deleting Data
 `DELETE FROM table_name WHERE column_name/id = name/number;`  
-This deletes all columns or rows that have the column name or id number specified.
+This deletes all columns or rows that have the column name or id number specified, or match some other specified condition.  
+Like INSERT, it can use MySQL's priority and ignore commands.  
 
 `DELETE FROM table_name WHERE column_name IS NULL;`  
 This deletes all rows that have a null value in the specified column.
+
+To delete an entire table, not just its contents, use `DROP TABLE table_name;`  
+To delete an entire database, not just its contents, use `DROP DATABASE database_name;`  
 
 ## OPERATORS
 
