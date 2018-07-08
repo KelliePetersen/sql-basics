@@ -12,7 +12,7 @@ There are also MySQL notes at the bottom of each section.
 [Command Order](#command-order)  
 [View Database Contents](#view-database-contents)  
 [Multiple Tables](#multiple-tables)  
-[Notes](#notes)  
+[Subqueries](#subqueries)  
 [Other](#other)  
 
 ## COMMANDS
@@ -137,18 +137,21 @@ This deletes all rows that have a null value in the specified column.
 
 ## QUERIES													
 
-**ALIAS:** `SELECT name AS alias_name FROM table_name;`  
-This allows you to rename a column or table using an alias.
+**ALIAS:** For columns use `SELECT column_name AS alias_name FROM table_name;`  
+For tables use `SELECT alias_name.column_name FROM table_name AS alias_name;`  
+This allows you to rename a column or table using an alias.  
+If you want to alias multiple tables or columns, just separate each 'name AS name' statement with commas.  
 
 **DISTINCT:** `SELECT DISTINCT name FROM table_name;`  
 This returns unique values in the output. It filters out all duplicate values in the specified column(s). 
 
 **WHERE:** `SELECT * FROM table_name WHERE condition;`  
-This returns the values that satisfy the condition. For example, return years later than (>) 1990.
+This returns the values that satisfy the condition. For example, `WHERE table_name.years > 1990` return years later than 1990.
 
 **NULL:** `SELECT * FROM table_name WHERE name IS/IS NOT NULL;`  
-**LIKE:** `SELECT * FROM table_name WHERE name LIKE ‘wildcard_pattern’;`  
-This returns all values matching the wildcard pattern. A wildcard pattern is a word containing _ or %. For example, LIKE ‘n__e’ returns the values name and note. ‘A%’ and ‘%a’ return all values beginning with ‘A’ or ending with ‘a’. ‘%a%’ returns all values containing ‘a’. It is case insensitive. */
+
+**LIKE:** `SELECT * FROM table_name WHERE name LIKE 'wildcard_pattern';`  
+This returns all values matching the wildcard pattern. A wildcard pattern is a word containing _ or %. For example, `LIKE 'n__e'` returns the values 'name' and 'note'. `LIKE 'A%'` and `LIKE '%a'` return all values beginning with 'A' or ending with 'a'. `LIKE '%a%'` returns all values containing 'a'. It is case insensitive. */
 
 **IN:** `SELECT * FROM table_name WHERE column_name IN ( ‘column_value’);`  
 This returns all the rows that have the specified column value in the specified column. 
@@ -163,19 +166,21 @@ This combines multiple conditions.
 This returns anything that matches any one of the specified conditions.
 
 **NOT:** `SELECT * FROM table_name WHERE (not name = ‘value’) and (not name = ‘value’);`  
-	`SELECT * FROM table_name WHERE NOT (name = ‘value’ or name = ‘value’);`  
-This returns values that do not match the specified values. May also use “!=” instead of not.
+`SELECT * FROM table_name WHERE NOT (name = ‘value’ or name = ‘value’);`  
+This returns values that do not match the specified values. May also use != instead of not.
 
 **ORDER BY:** `SELECT * FROM table_name ORDER BY name ASC/DESC;`  
 This orders all returned values in ascending (default value) or descending (Z-A, 10-1) order. 
+Numbers may be used to refer to columns. `SELECT name, age, gender ORDER BY 2` orders the returned values by age.
 
-**LIMIT:** `SELECT * FROM table_name LIMIT number;`  
-This limits the amount of the selection to the specified number value. 
+**LIMIT:** `SELECT * FROM table_name LIMIT row, amount;`  
+This limits the amount of information returned. `LIMIT 3` would mean that only 3 rows are returned. `LIMIT 3, 5` would mean that 5 rows are selected, starting from the third row.  
 
 **CASE:** `SELECT name, CASE WHEN condition THEN string ELSE string END/END AS alias_name FROM table_name;`	 
 This creates different outputs based on conditions. It is SQL’s way of handling if-then logic. There can be multiple WHEN conditions. Indent long CASE commands for readability.
 
 ## AGGREGATE FUNCTIONS										
+Aggregates and commands may contain and combine themselves and each other.
 
 **COUNT:** `SELECT COUNT(*) FROM table_name;`  
 This returns the total number of rows in the table. 
@@ -189,10 +194,11 @@ This returns the smallest or largest value.
 **AVG:** `SELECT AVG(name) FROM table_name;`  
 This returns the average value in the column. 
 
-**GROUP BY:** `SELECT name FROM movies GROUP BY name;`  
+**GROUP BY:** `SELECT name FROM table_name GROUP BY name;`  
 This groups all equal values into a single row or column.  
+Numbers may be used to refer to columns. `SELECT name, age, gender GROUP BY 2` groups the returned values by age.
 
-**HAVING:** `SELECT name FROM movies GROUP BY name HAVING condition;`  
+**HAVING:** `SELECT name FROM table_name GROUP BY name HAVING condition;`  
 This filters which groups to include and which to exclude. It’s like WHERE, but for groups.
 
 **ROUND:** `SELECT ROUND(name, 0) FROM table_name;`  
@@ -230,13 +236,13 @@ Information will often be spread out across multiple tables. If all information 
 
 **JOIN:** `SELECT * FROM table_name JOIN other_table_name ON table_name.column_name = other_table_name.column_name;`  
 
-Combining multiple tables is called joining tables. The JOIN command combines the two specified tables. The ON command gives duplicate columns shared between each table the same name, to avoid ambiguity. JOIN can be made more specific by using table_name.column_name (e.g. person.age) for SELECT, instead of just using table_name or \*. Other Commands included, such as WHERE, will have to use table_name.column_name format. If the two tables have different information in the shared column_name, those rows won’t merge.  
+Combining multiple tables is called joining tables. The JOIN command combines the two specified tables. The ON command gives duplicate columns shared between each table the same name, to avoid ambiguity. JOIN can be made more specific by using table_name.column_name (e.g. person.age) for SELECT, instead of just using table_name or \*. Other Commands included, such as WHERE, will have to use table_name.column_name format. If the two tables have different information in the shared column_name, those rows won't merge.  
 
 **SIMPLE JOIN:** `SELECT * FROM table, other_table WHERE table.column = other_table.column;`  
 A simplified version of the above JOIN command.
 
 **LEFT JOIN:** `SELECT * FROM table LEFT JOIN other_table ON table.column = other_table.column`  
-This allows us to keep the unmatched rows of two combined tables. The first table’s data is kept.  
+This allows us to keep the unmatched rows of two combined tables. The first table's data is kept.  
 
 **CROSS JOIN:** `SELECT table.column, other_table.column FROM table CROSS JOIN other_table;`  
 This combines all rows of one table with all rows of another table. It does not require ON command.  
@@ -244,15 +250,33 @@ This combines all rows of one table with all rows of another table. It does not 
 **UNION:** `SELECT * FROM table1 UNION SELECT * FROM table2;`  
 This stacks one table on top of the other. The tables must have the same amount of columns, and must have the same data types in the same order.  
 
+When joining more than 2 tables, it is suggested to join tables in pairs, forming a chain. Join table1 with table2, table2 with table3, etc.
+
+You can create a join on the same table by using aliases. This can be useful in finding rows that have values in common.  
+`SELECT alias.column, alias2.column, alias.column2 FROM table AS alias, table2 AS alias2  
+WHERE alias.column = alias2.column;`  
+
+**MySQL**
+Simple Joins can be done without using JOIN.
+`SELECT table.column, table2.column FROM table, table2 WHERE table.column = table2.column;`
+
+## SUBQUERIES
+
+Subqueries can use the result of one query in another query.  
+`SELECT column FROM table WHERE column = (SELECT ... );`  
+For example, they can be used to select the lowest priced item:  
+`SELECT item, amount FROM stock WHERE amount = (SELECT MIN(amount) FROM stock);`  
+
+**Subquery Operators**  
+**ANY/ALL:** `SELECT column FROM table WHERE column > ANY (SELECT ...);`  
+This returns true if the comparison is true for any of the rows in the subquery. It is identical to IN and SOME. 'ANY' can be replaced with 'SOME'. '> ANY' can be replaced with 'IN'. If you only want to return true if the comparison is true for all of the rows, replace 'ANY' with 'ALL'.  
+
+**Correlated Subqueries**  
+**EXISTS:** `SELECT column FROM table WHERE EXISTS/NOT EXISTS (SELECT ...);`  
+This looks for rows in the inner query that match or don't match any of the outer query's rows. 
+
 **WITH:** `WITH previous_query AS ( SELECT … ) SELECT * FROM previous_query ... ;`  
 This creates a separate query functioning as a temporary table, which we may use in the final query.
-
-## NOTES
-
-* Aggregates and commands may contain and combine themselves and each other.
-
-Numbers may be used to refer to SELECT columns in GROUP BY and ORDER BY commands.
-For example, `SELECT name, age GROUP BY 2` groups the returned values by age.
 
 ## OTHER													
 These commands vary depending on the database system.
